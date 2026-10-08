@@ -299,6 +299,15 @@
     background:linear-gradient(90deg, transparent, var(--gold), transparent);
   }
   .mid-cta-inner{position:relative}
+
+  /* Marca-d'água: símbolo da logo, decorativo (aria-hidden), cortado pela borda */
+  /* shortcut: símbolo recortado do PNG da logo (205px), trocar por SVG oficial quando houver */
+  .brand-mark{
+    position:absolute;pointer-events:none;aspect-ratio:205/172;
+    background:url(assets/ziproll-symbol.png) no-repeat center/contain;
+  }
+  /* o leopardo olha para a esquerda: cabeça visível à direita do texto, corpo cortado pela borda */
+  .mid-cta-box .brand-mark{width:460px;right:-190px;bottom:-40px;opacity:.05}
   .mid-cta h2{
     font-size:clamp(30px,3.6vw,40px);font-weight:800;letter-spacing:-.02em;
     line-height:1.15;margin:0 0 14px;text-wrap:balance;
@@ -416,6 +425,7 @@
     .plan-featured:hover{transform:translateY(-3px)}
     .logos{grid-template-columns:repeat(3,1fr);gap:24px}
     .mid-cta-box{padding:52px 28px}
+    .mid-cta-box .brand-mark{width:320px;right:-120px;bottom:-30px}
     .section{padding:76px 0}
   }
   @media (max-width: 720px){
@@ -429,6 +439,7 @@
     .panel-notify{left:-8px}
     .panel-float{width:210px}
     .section-head{margin-bottom:40px}
+    .mid-cta-box .brand-mark{width:240px;right:-90px;bottom:-24px;opacity:.04}
   }
 </style>
 </head>
@@ -657,6 +668,7 @@
 <section class="mid-cta" id="comecar">
   <div class="container">
     <div class="mid-cta-box">
+      <span class="brand-mark" aria-hidden="true"></span>
       <div class="mid-cta-inner">
         <h2>Experimente o ZipRoll <span class="gold">grátis</span>.</h2>
         <p>Configure sua empresa, faça upload do primeiro lote de holerites e veja a plataforma trabalhando em poucos minutos.</p>
