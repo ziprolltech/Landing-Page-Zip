@@ -174,6 +174,7 @@
   .app-stat{padding:20px 22px}
   .app-stat + .app-stat{border-left:1px solid var(--line)}
   .app-stat span{display:block;color:var(--cream-faint);font-size:12.5px}
+  .app-stat em{font-style:normal}
   .app-stat b{display:block;margin-top:4px;font-size:28px;line-height:1.15;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
   .app-progress{height:3px;background:rgba(252,245,228,.08);margin-top:12px;border-radius:2px;overflow:hidden}
   .app-progress i{display:block;height:100%;width:100%;background:var(--gold);border-radius:2px;transform-origin:0 50%}
@@ -213,6 +214,65 @@
   .feat:hover{border-color:rgba(196,169,106,.45)}
   .feat h3{font-weight:600;font-size:19px;line-height:1.25;letter-spacing:-.015em;margin:0 0 10px}
   .feat p{margin:0;color:var(--cream-soft);font-size:15.5px;line-height:1.55}
+
+  /* Como funciona: cena fixada que acompanha a rolagem (PDF → holerites → celular).
+     Sem JS ou com "reduzir movimento" fica estática: as quatro etapas em lista e o
+     celular com o holerite aberto. Tudo dentro do palco é medido em cqw. */
+  .story-pin{padding:128px 0}
+  .story-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:72px;align-items:center}
+  .story-copy .section-title{margin:14px 0 36px}
+  .story-steps{list-style:none;margin:0;padding:0}
+  .story-steps li{padding:14px 0 14px 22px;border-left:2px solid var(--line-strong);transition:opacity .4s var(--ease), border-color .4s var(--ease)}
+  .story-steps b{display:block;font-size:19px;font-weight:600;letter-spacing:-.015em}
+  .story-steps p{margin:6px 0 0;color:var(--cream-soft);font-size:16px;line-height:1.55;max-width:440px}
+  .story-live{height:440vh}
+  .story-live .story-pin{position:sticky;top:0;height:100vh;height:100svh;padding:68px 0 0;display:grid;align-items:center;overflow:hidden}
+  .story-live .story-steps li{opacity:.4}
+  .story-live .story-steps li.on{opacity:1;border-left-color:var(--gold)}
+
+  .story-stage{position:relative;width:100%;max-width:min(560px,72svh);aspect-ratio:1;margin:0 auto;container-type:inline-size}
+  .story-stage > *{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+  .story-live .story-stage > *{will-change:transform,opacity}
+  .s-pdf{width:44cqw;aspect-ratio:3/4;padding:5.5cqw 4.5cqw;background:var(--paper);border-radius:1.6cqw;opacity:0;
+    box-shadow:1.3cqw 1.3cqw 0 -.2cqw #d8ceb7, 2.6cqw 2.6cqw 0 -.4cqw #bdb39c, 0 7cqw 12cqw -5cqw rgba(0,0,0,.7)}
+  .s-pdf i{display:block;height:1.2cqw;border-radius:1cqw;background:rgba(28,30,44,.13);margin-bottom:2.3cqw}
+  .s-pdf i:first-child{width:46%;height:1.8cqw;background:var(--gold);margin-bottom:4cqw}
+  .s-pdf i:nth-child(3n){width:72%}
+  .s-pdf b{position:absolute;right:3.5cqw;bottom:3.5cqw;font-size:2.5cqw;font-weight:700;letter-spacing:.04em;color:var(--paper);background:var(--ink);padding:.5cqw 1.5cqw;border-radius:.8cqw}
+  .s-label{white-space:nowrap;font-size:clamp(11px,2.7cqw,15px);color:var(--cream-soft);opacity:0}
+  .s-label b{color:var(--cream);font-weight:600}
+  .s-slip{width:8.4cqw;aspect-ratio:3/4;background:var(--paper);border-radius:.9cqw;box-shadow:0 1.4cqw 2.4cqw -1cqw rgba(0,0,0,.7);opacity:0}
+  .s-slip::before{content:"";position:absolute;top:1.5cqw;left:1.3cqw;width:45%;height:.7cqw;border-radius:1cqw;background:var(--gold)}
+  .s-slip::after{content:"";position:absolute;top:3.5cqw;left:1.3cqw;right:1.3cqw;height:.5cqw;border-radius:1cqw;background:rgba(28,30,44,.16);box-shadow:0 1.5cqw 0 rgba(28,30,44,.16),0 3cqw 0 rgba(28,30,44,.16)}
+  .s-mail{width:23cqw;aspect-ratio:1;border-radius:4.5cqw;background:var(--navy-raise);border:1px solid var(--line-strong);display:grid;place-content:center;justify-items:center;gap:1.2cqw;font-size:clamp(10px,2.5cqw,14px);font-weight:600;color:var(--cream);opacity:0;box-shadow:0 5cqw 9cqw -5cqw rgba(0,0,0,.7)}
+  .s-mail svg{width:8.5cqw;height:8.5cqw;color:var(--gold)}
+
+  /* Celular do colaborador (dados de exemplo) */
+  .s-phone{--pw:44cqw;width:var(--pw);aspect-ratio:9/18.5;font-size:calc(var(--pw)*.046);line-height:1.35;
+    border-radius:calc(var(--pw)*.14);background:#0b0c12;border:calc(var(--pw)*.022) solid #30334a;box-shadow:0 8cqw 14cqw -7cqw rgba(0,0,0,.85)}
+  .s-phone .via{position:absolute;left:50%;top:-2.6em;transform:translateX(-50%);white-space:nowrap;font-size:1.05em;font-weight:600;color:var(--cream);opacity:0}
+  .s-phone .screen{position:absolute;inset:0;border-radius:calc(var(--pw)*.115);overflow:hidden;background:linear-gradient(160deg,#262a40,#14151f 70%)}
+  .s-phone .screen::before{content:"";position:absolute;z-index:3;left:50%;top:.7em;width:28%;height:1.3em;border-radius:1em;background:#0b0c12;transform:translateX(-50%)}
+  .lock,.payslip{position:absolute;inset:0}
+  .lock{padding:3.4em .9em 0;color:var(--cream);text-align:center}
+  .lock time{display:block;font-size:3.6em;font-weight:600;letter-spacing:-.04em;line-height:1}
+  .lock small{display:block;font-size:.95em;color:var(--cream-soft);margin-top:.5em}
+  .notif{margin-top:2em;padding:.8em;border-radius:1.1em;background:rgba(252,245,228,.13);display:grid;grid-template-columns:2.3em 1fr;gap:.7em;text-align:left}
+  .notif img{width:2.3em;height:2.3em;padding:.3em;border-radius:.6em;background:var(--navy);object-fit:contain}
+  .notif b{display:flex;justify-content:space-between;font-size:.92em;font-weight:600}
+  .notif b span{font-weight:400;color:var(--cream-faint)}
+  .notif p{margin:.15em 0 0;font-size:.92em;color:var(--cream-soft)}
+  .payslip{padding:3.1em 1.1em 1.1em;background:var(--paper);color:var(--ink);display:flex;flex-direction:column}
+  .payslip header{display:flex;justify-content:space-between;align-items:center;gap:.5em}
+  .payslip header b{font-size:1.15em;font-weight:700;letter-spacing:-.02em}
+  .payslip header span{font-size:.8em;font-weight:600;color:var(--gold-lo);border:1px solid rgba(131,107,48,.5);border-radius:1em;padding:.05em .6em}
+  .payslip .who{margin:.9em 0 1em;padding-bottom:.9em;border-bottom:1px solid rgba(28,30,44,.14);font-size:.92em;color:var(--ink-soft)}
+  .payslip .who b{display:block;font-size:1.1em;color:var(--ink);font-weight:600}
+  .payslip dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:.55em .5em;font-size:.92em;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .payslip dd{margin:0;text-align:right;color:var(--ink)}
+  .payslip .net{margin-top:1em;padding-top:.9em;border-top:1px solid rgba(28,30,44,.14);display:flex;justify-content:space-between;align-items:baseline;font-size:.92em;color:var(--ink-soft)}
+  .payslip .net b{font-size:1.5em;font-weight:700;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}
+  .payslip .dl{margin-top:auto;text-align:center;font-weight:600;font-size:.95em;padding:.75em;border-radius:.8em;background:var(--ink);color:var(--cream)}
 
   /* CTA: faixa creme invertida, com a onça em silhueta navy discreta */
   .mid-cta{background:var(--paper);color:var(--ink);position:relative;overflow:hidden}
@@ -271,7 +331,7 @@
 
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto}
-    html.js .hero [data-in],html.js .hero-cat i,html.has-intro .hero .container{animation:none}
+    html.js .hero [data-in],html.js .hero-cat i,html.has-intro .hero .container,.app-state.busy::before{animation:none}
     html.js [data-reveal]{opacity:1;transform:none}
     *{transition:none!important}
   }
@@ -290,6 +350,19 @@
     .section{padding:96px 0}
     .section-head{grid-template-columns:1fr;gap:18px;margin-bottom:48px}
     .section-kicker{margin-bottom:0}
+    .story-pin{padding:96px 0}
+    .story-grid{grid-template-columns:1fr;gap:40px}
+    .story-copy .section-title{margin:10px 0 24px}
+    .story-live .story-pin{align-items:start;padding-top:92px}
+    .story-live .story-grid{gap:20px}
+    .story-live .story-copy .section-title{font-size:clamp(24px,5.6vw,34px);margin-bottom:16px}
+    .story-live .story-steps{min-height:132px}
+    .story-live .story-steps li{display:none;padding:2px 0 2px 16px}
+    .story-live .story-steps li.on{display:block}
+    .story-live .story-steps b{font-size:17px}
+    .story-live .story-steps p{font-size:15px}
+    .story-stage{max-width:min(88vw,46svh)}
+    .s-phone{--pw:56cqw}
     .mid-cta-box{grid-template-columns:1fr;gap:24px;padding:84px 0}
     .mid-cta h2,.mid-cta p,.mid-cta .btn,.mid-cta-meta{grid-column:1}
     .plans{grid-template-columns:1fr;max-width:480px}
@@ -308,7 +381,7 @@
     .hero-meta i,.mid-cta-meta i{display:none}
     .feat-list{grid-template-columns:1fr}
     .trust ul{flex-direction:column;gap:12px}
-    .app-state{display:none}
+    .app-state,.app-stat em{display:none}
     .app-bar{padding:12px 16px}
     .app-stat{padding:16px}
     .app-stat b{font-size:22px}
@@ -416,7 +489,7 @@
           </div>
           <div class="app-stats">
             <div class="app-stat">
-              <span>Holerites no lote</span>
+              <span>Holerites<em> no lote</em></span>
               <b id="appTotal">1.248</b>
             </div>
             <div class="app-stat">
@@ -456,7 +529,73 @@
   </div>
 </section>
 
-<!--STORY-->
+<!-- COMO FUNCIONA -->
+<section class="story" id="como-funciona" aria-labelledby="storyTitle">
+  <div class="story-pin">
+    <div class="container story-grid">
+      <div class="story-copy">
+        <span class="section-kicker">Como funciona</span>
+        <h2 class="section-title" id="storyTitle">Um PDF entra. Cada holerite chega ao seu dono.</h2>
+        <ol class="story-steps">
+          <li class="on">
+            <b>Envie a folha inteira</b>
+            <p>Suba o PDF da folha do jeito que ele sai do seu sistema. Um arquivo só, com todas as páginas.</p>
+          </li>
+          <li>
+            <b>A ZipRoll separa holerite por holerite</b>
+            <p>Cada página é processada e classificada automaticamente para o colaborador correspondente.</p>
+          </li>
+          <li>
+            <b>Cada pessoa recebe só o seu</b>
+            <p>O aviso segue por WhatsApp ou e-mail para o colaborador certo, com trilha de auditoria de cada entrega.</p>
+          </li>
+          <li>
+            <b>Abre no celular, sem senha</b>
+            <p>O colaborador toca na notificação e vê o holerite. Sem criar conta complicada nem lembrar senha.</p>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Palco da cena (decorativo; o texto ao lado conta a mesma história) -->
+      <div class="story-stage" id="storyStage" aria-hidden="true">
+        <div class="s-pdf"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b>PDF</b></div>
+        <div class="s-label"><b>Folha_Junho.pdf</b> · 1.248 páginas</div>
+        <div class="s-mail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg>
+          E-mail
+        </div>
+        <div class="s-phone">
+          <span class="via">WhatsApp</span>
+          <div class="screen">
+            <div class="lock">
+              <time>09:02</time>
+              <small>Tela de bloqueio</small>
+              <div class="notif">
+                <img src="assets/ziproll-symbol.svg" alt="" loading="lazy" />
+                <div>
+                  <b>ZipRoll <span>agora</span></b>
+                  <p>Seu holerite de junho chegou. Toque para abrir.</p>
+                </div>
+              </div>
+            </div>
+            <div class="payslip">
+              <header><b>Holerite · Junho</b><span>Exemplo</span></header>
+              <div class="who"><b>Camila de Oliveira</b>Matrícula 00423</div>
+              <dl>
+                <dt>Salário base</dt><dd>3.200,00</dd>
+                <dt>Horas extras</dt><dd>184,60</dd>
+                <dt>INSS</dt><dd>−281,62</dd>
+                <dt>IRRF</dt><dd>−48,27</dd>
+              </dl>
+              <div class="net">Líquido <b>R$ 3.054,71</b></div>
+              <div class="dl">Baixar PDF</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- FEATURES -->
 <section class="section features" id="funcionalidades">
@@ -857,7 +996,83 @@
     document.querySelectorAll('[data-count]').forEach(el => counter.observe(el));
   }
 
-  /*STORYJS*/
+  // Como funciona: o progresso da rolagem dentro da seção (0 → 1) move toda a cena.
+  // Só transform e opacity; nada roda enquanto a seção está fora da tela.
+  (function story() {
+    const sec = document.getElementById('como-funciona'), stage = document.getElementById('storyStage');
+    if (!sec || reduce) return;
+    const q = c => stage.querySelector(c);
+    const pdf = q('.s-pdf'), label = q('.s-label'), mail = q('.s-mail'), phone = q('.s-phone');
+    const via = q('.via'), notif = q('.notif'), payslip = q('.payslip');
+    const steps = [...sec.querySelectorAll('.story-steps li')];
+    const lerp = (a, b, t) => a + (b - a) * t;
+    sec.classList.add('story-live');
+
+    // holerites: nascem do PDF, espalham numa grade solta e voam para o canal de cada um
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const COLS = 7, N = 28;
+    const slips = Array.from({ length: N }, (_, i) => {
+      const el = document.createElement('i');
+      el.className = 's-slip';
+      stage.insertBefore(el, mail);
+      const col = i % COLS, row = Math.floor(i / COLS);
+      return {
+        el, gx: (col - (COLS - 1) / 2) * .135 + (rnd() - .5) * .03, gy: (row - 1.5) * .19 + (rnd() - .5) * .04,
+        rot: (rnd() - .5) * 18, toPhone: (col + row) % 2 === 0, delay: rnd() * .1,
+      };
+    });
+
+    let W = 0, shown = -1;
+    const put = (el, x, y, scale, rot, opacity) => {
+      el.style.transform = `translate(-50%,-50%) translate3d(${(x * W).toFixed(1)}px,${(y * W).toFixed(1)}px,0) scale(${scale.toFixed(3)}) rotate(${rot.toFixed(1)}deg)`;
+      el.style.opacity = opacity.toFixed(3);
+    };
+
+    const render = raw => {
+      const p = Math.min(1, raw / .93);                  // o fim da rolagem segura o último quadro
+      const step = p < .22 ? 0 : p < .5 ? 1 : p < .78 ? 2 : 3;
+      if (step !== shown) { shown = step; steps.forEach((li, i) => li.classList.toggle('on', i === step)); }
+
+      // 1. o PDF da folha
+      const split = span(p, .22, .34);
+      put(pdf, 0, -.04, lerp(.94, 1, easeOut(span(p, 0, .1))) * (1 - .3 * split), 0, 1 - split);
+      put(label, 0, .34, 1, 0, 1 - span(p, .2, .27));
+
+      // 2. vira holerites individuais  3. cada um voa para o seu canal
+      slips.forEach(s => {
+        const out = easeOut(span(p, .22 + s.delay, .4 + s.delay));
+        const fly = easeInOut(span(p, .54 + s.delay, .68 + s.delay));
+        put(s.el,
+          lerp(s.gx * out, s.toPhone ? .34 : -.34, fly),
+          lerp(-.04 + (s.gy + .04) * out, 0, fly),
+          lerp(.5 + .5 * out, .25, fly), s.rot * out * (1 - fly),
+          Math.min(span(p, .22 + s.delay, .26 + s.delay), 1 - span(fly, .7, 1)));
+      });
+      const arrive = easeOut(span(p, .44, .54)), leave = span(p, .76, .84);
+      put(mail, lerp(-.7, -.34, arrive), 0, 1 - .2 * leave, 0, arrive * (1 - leave));
+
+      // 4. o celular vem para o centro, a notificação chega e o holerite abre
+      const focus = easeInOut(span(p, .76, .88));
+      put(phone, lerp(lerp(.75, .34, arrive), 0, focus), 0, lerp(.5, 1, focus), 0, arrive);
+      via.style.opacity = arrive * (1 - span(p, .74, .8));
+      const ping = easeOut(span(p, .86, .92));
+      notif.style.opacity = ping; notif.style.transform = `translateY(${((1 - ping) * -1.4).toFixed(2)}em)`;
+      const open = easeOut(span(p, .94, .995));
+      payslip.style.opacity = open; payslip.style.transform = `translateY(${((1 - open) * 10).toFixed(2)}%)`;
+    };
+
+    const onScroll = () => {
+      const r = sec.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > innerHeight + 100) return;
+      render(clamp01(-r.top / (r.height - innerHeight)));
+    };
+    const measure = () => { W = stage.offsetWidth; onScroll(); };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', measure, { passive: true });
+    W = stage.offsetWidth; render(0); onScroll();
+  })();
+
 </script>
 
 </body>
