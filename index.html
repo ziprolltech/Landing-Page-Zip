@@ -57,8 +57,8 @@
   :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
   .container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px}
 
-  /* Abertura: a onça é desenhada num canvas, mancha por mancha. Ela acende a partir do olho,
-     recebe um feixe de luz, agacha e dá o bote; a tela passa por dentro da boca.
+  /* Abertura: a onça é desenhada num canvas, mancha por mancha. Ela acende a partir do olho
+     sobre a marca, recebe um feixe de luz e avança devagar, abrindo a boca até engolir a tela.
      O fundo é o mesmo navy do site, então o hero aparece sem corte. */
   .intro{display:none}
   html.has-intro .intro{display:block;position:fixed;inset:0;z-index:100;overflow:hidden;cursor:pointer;
@@ -771,7 +771,7 @@
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Abertura: a onça dá o bote e morde a tela.
+  // Abertura: a onça acende sobre a marca e avança, lenta e inevitável, até engolir a tela.
   // O vetor da logo é lido uma vez e separado em manchas; cada quadro é pintado num canvas.
   (function intro() {
     const overlay = document.getElementById('intro');
@@ -784,7 +784,7 @@
       done = true;
       cancelAnimationFrame(raf);
       root.classList.add('intro-done');
-      overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, easing: 'ease-out', fill: 'forwards' })
+      overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 520, easing: 'ease-out', fill: 'forwards' })
         .finished.then(() => overlay.remove(), () => overlay.remove());
     };
 
@@ -825,11 +825,13 @@
       spots.forEach(g => {
         g.line = g.area > 200;                                   // contorno da cabeça e do queixo
         g.delay = g.line ? 60 : Math.hypot(g.cx - EYE[0], g.cy - EYE[1]) / far * 600 + rnd() * 110;
-        g.z = rnd() - .5;                                        // profundidade, para o bote ter volume
+        g.z = rnd() - .5;                                        // profundidade, para o avanço ter volume
       });
     };
 
-    const T_LIGHT = 1080, T_TENSE = 600, T_STRIKE = 680;
+    const T_LIGHT = 1080, T_TENSE = 820, T_STRIKE = 1250;
+    const wordmark = new Image();
+    wordmark.src = 'assets/ziproll-wordmark.png';
     const A = T_LIGHT, B = A + T_TENSE, END = B + T_STRIKE;
     const HOT = [246, 208, 128], CREAM = [252, 245, 228];
 
@@ -840,33 +842,34 @@
       const s0 = headW / 205;
       const end = Math.max(vw / 2 / 19, vh / 2 / 16) * 1.3;
 
+      // a marca fica sob a cabeça, como na logo; a cabeça sobe um pouco para o conjunto centralizar
+      const wordW = Math.min(headW * 1.45, vw * .72), wordH = wordW * 112 / 453;
+      const lift = -wordH * .68;
+
       // câmera e pose para o instante t
-      let s = s0, look = CENTER, ox = 0, oy = 0, rot = 0, jaw = 6, head = -3, alpha = 1, trail = 0, flash = 0, e = 0, shake = 0;
+      let s = s0, look = CENTER, oy = lift, rot = 0, jaw = 6, head = -3, alpha = 1, trail = 0, e = 0;
       if (t < A) {                                           // 1. acende, com a câmera chegando devagar
         s = s0 * lerp(.93, 1, outCubic(t / A));
-      } else if (t < B) {                                    // 2. tensão: recua, abaixa a cabeça, fecha a boca
+      } else if (t < B) {                                    // 2. presença: encara, e a câmera não para de chegar
         const k = inOut((t - A) / T_TENSE);
-        s = s0 * lerp(1, .84, k); ox = .08 * headW * k; oy = .05 * headW * k; rot = -4 * k;
-        jaw = lerp(6, 10, k); head = lerp(-3, -6, k);
-      } else {                                               // 3. bote
+        s = s0 * lerp(1, 1.07, k); rot = -2 * k;
+        jaw = lerp(6, 9, k); head = lerp(-3, -5, k);
+      } else {                                               // 3. avanço: sem salto, sem tranco; só fica inevitável
         const k = seg(t, B, END);
-        e = Math.pow(k, 2.3);
-        s = s0 * .84 * Math.pow(end / (s0 * .84), e);        // zoom exponencial: acelera como algo vindo na sua direção
-        const open = outBack(seg(k, 0, .42)), bite = Math.pow(seg(e, .72, .97), 2);
-        jaw = lerp(lerp(10, -22, open), 12, bite);
-        head = lerp(lerp(-6, 9, open), -7, bite);
-        rot = lerp(-4, 6, outCubic(seg(k, 0, .45))) * (1 - seg(k, .45, .85));
-        const m = outCubic(seg(k, 0, .6));
+        e = k * k;
+        s = s0 * 1.07 * Math.pow(end / (s0 * 1.07), e);      // zoom exponencial: começa quase parado e engole a tela
+        const open = inOut(seg(k, 0, .64));                  // a boca abre devagar e fica aberta
+        jaw = lerp(9, -21, open); head = lerp(-5, 8, open);
+        rot = lerp(-2, 2, inOut(seg(k, 0, .7)));
+        const m = inOut(seg(k, 0, .74));
         look = [lerp(CENTER[0], MOUTH[0], m), lerp(CENTER[1], MOUTH[1], m)];
-        ox = .08 * headW * (1 - m);
-        oy = .05 * headW * (1 - m) - .15 * headW * Math.sin(Math.PI * seg(k, 0, .6));   // arco do salto
-        alpha = 1 - seg(e, .94, 1);
-        trail = k > .04 ? .5 : 0;
-        shake = 8 * seg(k, .78, 1);
-        flash = .18 * Math.sin(Math.PI * seg(e, .88, 1));
+        oy = lift * (1 - m);
+        alpha = 1 - seg(e, .5, .8);                         // some na escuridão da boca antes de virar borrão
+        trail = e > .4 ? .3 : 0;
       }
+      const word = seg(t, 560, 1060) * (1 - seg(t, B - 80, B + 300));
 
-      // limpa (ou, no bote, apaga só parte do quadro anterior: é o rastro de movimento)
+      // limpa (ou, no fim do avanço, apaga só parte do quadro anterior: é o rastro de movimento)
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.globalAlpha = 1;
       if (trail) {
@@ -877,7 +880,11 @@
       } else ctx.clearRect(0, 0, cv.width, cv.height);
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.translate(vw / 2 + ox + shake * Math.sin(t * .11), vh / 2 + oy + shake * Math.cos(t * .17));
+      if (word > 0 && wordmark.complete && wordmark.naturalWidth) {
+        ctx.globalAlpha = word;
+        ctx.drawImage(wordmark, (vw - wordW) / 2, vh / 2 + lift + headW * .42 + wordH * .36 + (1 - outCubic(seg(t, 560, 1060))) * 12, wordW, wordH);
+      }
+      ctx.translate(vw / 2, vh / 2 + oy);
       ctx.rotate(rot * RAD);
       ctx.scale(s, s);
       ctx.translate(-look[0], -look[1]);
@@ -910,10 +917,10 @@
         ctx.restore();
       }
 
-      // feixe de luz dourada varrendo o pelo, só por cima do que já está pintado
-      const sweep = seg(t, A - 260, B - 40);
+      // feixe de luz dourada varrendo a onça e a marca, só por cima do que já está pintado
+      const sweep = seg(t, A - 200, B - 60);
       if (sweep > 0 && sweep < 1) {
-        const x = lerp(-70, 275, inOut(sweep));
+        const x = lerp(-190, 400, inOut(sweep));
         const beam = ctx.createLinearGradient(x - 38, 0, x + 38, 44);
         beam.addColorStop(0, 'rgba(246,208,128,0)');
         beam.addColorStop(.5, 'rgba(246,208,128,.95)');
@@ -921,15 +928,8 @@
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = 'source-atop';
         ctx.fillStyle = beam;
-        ctx.fillRect(-60, -60, 330, 300);
+        ctx.fillRect(-240, -60, 690, 420);
         ctx.globalCompositeOperation = 'source-over';
-      }
-
-      if (flash > 0) {                                       // clarão quente no instante da mordida
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.globalAlpha = flash;
-        ctx.fillStyle = '#e4d9c0';
-        ctx.fillRect(0, 0, cv.width, cv.height);
       }
     };
 
@@ -939,7 +939,7 @@
       if (frozen !== null) { draw(+frozen); return; }
       // Qualquer interação pula a abertura; o relógio garante que ela nunca prenda a página
       ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => addEventListener(ev, finish, { once: true, passive: true }));
-      const watchdog = setTimeout(finish, 5500);
+      const watchdog = setTimeout(finish, 7000);
       const t0 = performance.now();
       const frame = now => {
         if (done) return;
